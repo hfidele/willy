@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Quotes Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url(flowers.jpg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    .container {
+      text-align: center;
+      max-width: 600px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(13, 225, 109, 0.1);
+  
+    }
+    #quote {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: rgb(19, 2, 35);
+      background: linear-gradient(to right,green, white);
+      font-weight: 900;
+      font-style: unset;
+    }
+    .btn {
+      background: linear-gradient(to right, rgb(19, 109, 19), rgb(9, 9, 75));
+      color: skyblue;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+
+    }
+    
+    #copyBtn {
+      margin-right: 10px;
+    }
+    #tiktokBtn {
+      margin-left: 10px;
+    }
+    #clock {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 20px;
+      color: #4b09f1;
+      background: linear-gradient(to right, green,skyblue);
+      border-radius: 30px;
+      font-weight: 700;
+    }
+    .loading {
+      display: none;
+      margin-top: 20px;
+      font-size: 20px;
+      color: rgb(72, 14, 128);
+      font-weight: 500;
+    }
+    .loading::after {
+      content: 'Loading...';
+      animation: loadingAnim 2s infinite;
+      font-weight: 500;
+    }
+    @keyframes loadingAnim {
+      0% { content: 'Loading.'; }
+      33% { content: 'Loading..'; }
+      66% { content: 'Loading...'; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="quote">Click "New Quote" to get a random quote.</div>
+    <div class="loading"></div>
+    <button class="btn" id="newQuoteBtn">New Quote</button>
+    <button class="btn" id="copyBtn">Copy Quote</button>
+    <button class="btn" id="tiktokBtn">Videos</button>
+  </div>
+  <div id="clock"></div>
+  <script>
+    function showLoading() {
+      document.querySelector('.loading').style.display = 'block';
+    }
+
+    function hideLoading() {
+      document.querySelector('.loading').style.display = 'none';
+    }
+
+    function getQuote() {
+      showLoading();
+      fetch('https://api.quotable.io/random')
+        .then(response => response.json())
+        .then(data => {
+          hideLoading();
+          document.getElementById('quote').textContent = data.content;
+        })
+        .catch(error => {
+          hideLoading();
+          console.error('Error fetching quote:', error);
+          alert('Failed to fetch quote. Please check your internet connection.');
+        });
+    }
+
+    function copyQuote() {
+      const quote = document.getElementById('quote').textContent;
+      navigator.clipboard.writeText(quote)
+        .then(() => alert('Quote copied to clipboard!'))
+        .catch(err => console.error('Failed to copy quote: ', err));
+    }
+
+    function goToTikTok() {
+      window.location.href = 'https://www.tiktok.com/@mrwillycreativity250';
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    document.getElementById('newQuoteBtn').addEventListener('click', getQuote);
+    document.getElementById('copyBtn').addEventListener('click', copyQuote);
+    document.getElementById('tiktokBtn').addEventListener('click', goToTikTok);
+
+    getQuote();
+    setInterval(updateTime, 1000); // Update clock every second
+  </script>
+</body>
+</html>
